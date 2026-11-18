@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据结构第八章：图，一篇真正看懂的图文教程</title>
+<style>
+:root{--ink:#263445;--muted:#667789;--blue:#315f88;--pale:#edf4f8;--line:#dce5eb;--gold:#c58b37;--green:#397b68}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f5f7;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.85}
+.page{max-width:820px;margin:28px auto;background:#fff;padding:54px 64px 70px;box-shadow:0 8px 34px rgba(28,49,67,.08)}
+.kicker{color:var(--blue);font-size:13px;letter-spacing:2px;font-weight:700}
+h1{font-size:32px;line-height:1.35;margin:12px 0 16px;color:#1f3347}
+.lead{font-size:17px;color:#536679;border-left:4px solid var(--gold);padding:4px 0 4px 18px;margin:24px 0 30px}
+h2{font-size:23px;margin:48px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--line);color:#244c6c}
+h3{font-size:18px;margin:26px 0 8px;color:#315f88}
+p{margin:12px 0}
+.small{font-size:13px;color:var(--muted)}
+.figure{margin:24px 0 28px;padding:18px 16px;background:#fbfcfd;border:1px solid var(--line);border-radius:12px;text-align:center}
+.figure svg{width:100%;max-width:620px;height:auto;display:block;margin:auto}
+.caption{font-size:13px;color:var(--muted);margin-top:10px}
+.note{background:var(--pale);border-left:4px solid var(--blue);padding:14px 18px;margin:20px 0;border-radius:0 8px 8px 0}
+.warn{background:#fff8ec;border-left:4px solid var(--gold);padding:14px 18px;margin:20px 0;border-radius:0 8px 8px 0}
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+th{background:#f1f5f8;color:#31516c}
+ul,ol{padding-left:1.4em}
+li{margin:7px 0}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;background:#edf4f8;color:#315f88;font-size:12px;margin-right:5px}
+.summary{background:#f7f9fa;border-radius:12px;padding:18px 22px;margin-top:22px}
+.footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+@media(max-width:700px){.page{margin:0;padding:30px 22px 48px}h1{font-size:27px}h2{font-size:21px}}
+</style>
+</head>
+<body>
+<main class="page">
+<div class="kicker">数据结构 · 第八章学习笔记</div>
+<h1>图：把“点和点之间的关系”真正学明白</h1>
+<p class="small">从零理解图的概念、存储、遍历、连通性、生成树与最短路径</p>
+<div class="lead">树描述的是层级关系，图描述的是更自由的连接关系。城市道路、社交关系、网络设备、课程依赖……很多现实问题，都可以抽象成一张“图”。</div>
+
+<h2>01 先认识图：点和边组成的关系网</h2>
+<p>图（Graph）由两个集合组成：顶点集合 <b>V</b> 和边集合 <b>E</b>，通常记作 <b>G=(V,E)</b>。</p>
+<ul><li><b>顶点（Vertex）</b>：表示对象，例如城市、用户、设备。</li><li><b>边（Edge）</b>：表示对象之间的关系，例如道路、好友关系、网络连接。</li></ul>
+<div class="figure">
+<svg viewBox="0 0 620 230" role="img" aria-label="由五个顶点和多条边组成的无向图">
+<g stroke="#7b91a4" stroke-width="3" fill="none"><path d="M105 112 L230 48 L365 88 L505 48"/><path d="M105 112 L230 178 L365 88 L505 178"/><path d="M230 48 L230 178"/></g>
+<g fill="#315f88" stroke="#fff" stroke-width="4"><circle cx="105" cy="112" r="22"/><circle cx="230" cy="48" r="22"/><circle cx="365" cy="88" r="22"/><circle cx="505" cy="48" r="22"/><circle cx="230" cy="178" r="22"/><circle cx="505" cy="178" r="22"/></g>
+<g fill="#fff" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="central"><text x="105" y="112">A</text><text x="230" y="48">B</text><text x="365" y="88">C</text><text x="505" y="48">D</text><text x="230" y="178">E</text><text x="505" y="178">F</text></g>
+</svg>
+<div class="caption">图1：顶点是对象，边是对象之间的连接。图中没有箭头，因此是无向图。</div>
+</div>
+<h3>有向图和无向图</h3>
+<div class="figure">
+<svg viewBox="0 0 620 190" role="img" aria-label="无向图和有向图对比">
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="#c58b37"/></marker></defs>
+<text x="145" y="25" text-anchor="middle" font-size="16" fill="#315f88" font-weight="700">无向图</text>
+<path d="M75 95 L215 95" stroke="#7b91a4" stroke-width="4"/><circle cx="75" cy="95" r="23" fill="#315f88"/><circle cx="215" cy="95" r="23" fill="#315f88"/><g fill="white" text-anchor="middle" dominant-baseline="central" font-weight="700"><text x="75" y="95">A</text><text x="215" y="95">B</text></g>
+<text x="145" y="145" text-anchor="middle" fill="#667789" font-size="13">A 与 B 相连，不分方向</text>
+<text x="465" y="25" text-anchor="middle" font-size="16" fill="#315f88" font-weight="700">有向图</text>
+<path d="M395 95 L535 95" stroke="#c58b37" stroke-width="4" marker-end="url(#arr)"/><circle cx="395" cy="95" r="23" fill="#315f88"/><circle cx="535" cy="95" r="23" fill="#315f88"/><g fill="white" text-anchor="middle" dominant-baseline="central" font-weight="700"><text x="395" y="95">A</text><text x="535" y="95">B</text></g>
+<text x="465" y="145" text-anchor="middle" fill="#667789" font-size="13">A → B，只表示 A 指向 B</text>
+</svg>
+<div class="caption">图2：有没有箭头，是区分有向图和无向图最直接的方法。</div>
+</div>
+<div class="note"><b>记忆：</b>无向边没有方向；有向边有起点和终点。看到箭头，先判断方向，再数入度、出度。</div>
+
+<h2>02 图怎么存进计算机：邻接矩阵与邻接表</h2>
+<p>图在纸上可以画出来，但计算机需要用数据结构保存顶点之间的连接。最常见的两种方式是邻接矩阵和邻接表。</p>
+<h3>邻接矩阵：用表格记录“有没有边”</h3>
+<p>假设有 A、B、C、D 四个顶点。若两个顶点之间有边，就在对应位置记 1；没有边就记 0（这是无权图的常见表示方式）。</p>
+<div class="figure">
+<svg viewBox="0 0 620 310" role="img" aria-label="四个顶点的邻接矩阵示意">
+<text x="310" y="28" text-anchor="middle" font-size="17" fill="#315f88" font-weight="700">顶点连接关系对应的邻接矩阵</text>
+<g font-size="16" fill="#263445" text-anchor="middle">
+<text x="220" y="86">A</text><text x="290" y="86">B</text><text x="360" y="86">C</text><text x="430" y="86">D</text>
+<text x="160" y="130">A</text><text x="160" y="180">B</text><text x="160" y="230">C</text><text x="160" y="280">D</text>
+</g>
+<g stroke="#dce5eb" stroke-width="1" fill="#f5f8fa">
+<rect x="185" y="100" width="280" height="200"/>
+</g>
+<g stroke="#dce5eb" stroke-width="1"><path d="M255 100V300 M325 100V300 M395 100V300 M185 150H465 M185 200H465 M185 250H465"/></g>
+<g font-size="18" text-anchor="middle" dominant-baseline="central" fill="#315f88" font-weight="700">
+<text x="220" y="125">0</text><text x="290" y="125">1</text><text x="360" y="125">1</text><text x="430" y="125">0</text>
+<text x="220" y="175">1</text><text x="290" y="175">0</text><text x="360" y="175">0</text><text x="430" y="175">1</text>
+<text x="220" y="225">1</text><text x="290" y="225">0</text><text x="360" y="225">0</text><text x="430" y="225">1</text>
+<text x="220" y="275">0</text><text x="290" y="275">1</text><text x="360" y="275">1</text><text x="430" y="275">0</text>
+</g>
+</svg>
+<div class="caption">图3：矩阵是 n 行 n 列。4 个顶点对应 4×4；有边的位置记为 1。</div>
+</div>
+<ul><li>矩阵大小只由<b>顶点数 n</b>决定：n×n。</li><li>查询两个顶点之间是否有边很快。</li><li>即使边很少，也要开出 n×n 的空间。</li><li>适合边比较多的<b>稠密图</b>。</li></ul>
+<h3>邻接表：每个顶点记下自己的邻居</h3>
+<div class="figure">
+<svg viewBox="0 0 620 300" role="img" aria-label="邻接表示意">
+<text x="310" y="28" text-anchor="middle" font-size="17" fill="#315f88" font-weight="700">邻接表：每个顶点列出相邻顶点</text>
+<g font-size="16" fill="#263445">
+<text x="100" y="82" font-weight="700">A</text><text x="100" y="137" font-weight="700">B</text><text x="100" y="192" font-weight="700">C</text><text x="100" y="247" font-weight="700">D</text>
+</g>
+<g stroke="#7b91a4" stroke-width="2.5" fill="none"><path d="M125 76H190 M125 131H190 M125 186H190 M125 241H190"/></g>
+<g fill="#eaf1f6" stroke="#8da4b5" stroke-width="1.5"><rect x="190" y="55" width="90" height="42" rx="8"/><rect x="295" y="55" width="90" height="42" rx="8"/><rect x="190" y="110" width="90" height="42" rx="8"/><rect x="190" y="165" width="90" height="42" rx="8"/><rect x="190" y="220" width="90" height="42" rx="8"/></g>
+<g fill="#315f88" font-size="16" text-anchor="middle" dominant-baseline="central" font-weight="700"><text x="235" y="76">B</text><text x="340" y="76">C</text><text x="235" y="131">A</text><text x="235" y="186">A</text><text x="235" y="241">B</text></g>
+<text x="420" y="78" fill="#667789" font-size="13">A 的邻居：B、C</text><text x="420" y="133" fill="#667789" font-size="13">B 的邻居：A</text><text x="420" y="188" fill="#667789" font-size="13">C 的邻居：A</text><text x="420" y="243" fill="#667789" font-size="13">D 的邻居：B</text>
+</svg>
+<div class="caption">图4：邻接表不铺满整个矩阵，只保存实际存在的邻接关系（示意）。</div>
+</div>
+<ul><li>只记录真实存在的边，通常更节省空间。</li><li>适合边比较少的<b>稀疏图</b>。</li><li>要查两个指定顶点是否相邻，可能需要在邻居链表中查找。</li></ul>
+<table><tr><th>比较</th><th>邻接矩阵</th><th>邻接表</th></tr><tr><td>存储形式</td><td>二维表格</td><td>每个顶点的邻居列表</td></tr><tr><td>空间特点</td><td>约与 n² 相关</td><td>约与 n+e 相关</td></tr><tr><td>更适合</td><td>稠密图</td><td>稀疏图</td></tr><tr><td>记忆关键词</td><td>查边方便</td><td>节省空间</td></tr></table>
+<div class="warn"><b>易错点：</b>邻接矩阵是 n×n，取决于顶点数，不取决于边数。100 个顶点，无论只有 5 条边还是 500 条边，矩阵都是 100×100。</div>
+
+<h2>03 图的遍历：DFS 与 BFS 是两种走法</h2>
+<p>遍历，就是从某个顶点出发，把能够访问到的顶点按规则访问一遍。最重要的两种方法是深度优先搜索 DFS 和广度优先搜索 BFS。</p>
+<div class="figure">
+<svg viewBox="0 0 620 260" role="img" aria-label="A连接B和C，B连接D和E的图">
+<g stroke="#91a3b2" stroke-width="3" fill="none"><path d="M310 48L190 125 M310 48L430 125 M190 125L125 215 M190 125L255 215"/></g>
+<g fill="#315f88" stroke="#fff" stroke-width="4"><circle cx="310" cy="48" r="24"/><circle cx="190" cy="125" r="24"/><circle cx="430" cy="125" r="24"/><circle cx="125" cy="215" r="24"/><circle cx="255" cy="215" r="24"/></g>
+<g fill="#fff" font-size="17" font-weight="700" text-anchor="middle" dominant-baseline="central"><text x="310" y="48">A</text><text x="190" y="125">B</text><text x="430" y="125">C</text><text x="125" y="215">D</text><text x="255" y="215">E</text></g>
+</svg>
+<div class="caption">图5：后面用这张图比较 DFS 和 BFS。假设邻接点按字母顺序访问。</div>
+</div>
+<h3>DFS：深度优先，先沿一条路走到底</h3>
+<p>从 A 出发，先走 B；从 B 继续走 D。D 没有没访问过的邻居，就回退到 B，再走 E。最后回到 A，走 C。</p>
+<div class="figure">
+<svg viewBox="0 0 620 245" role="img" aria-label="DFS访问顺序A B D E C">
+<g stroke="#c58b37" stroke-width="4" fill="none"><path d="M310 42L190 115L125 205 M190 115L255 205 M310 42L430 115" /></g>
+<g fill="#fff8ec" stroke="#c58b37" stroke-width="3"><circle cx="310" cy="42" r="23"/><circle cx="190" cy="115" r="23"/><circle cx="430" cy="115" r="23"/><circle cx="125" cy="205" r="23"/><circle cx="255" cy="205" r="23"/></g>
+<g fill="#263445" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central"><text x="310" y="42">1 A</text><text x="190" y="115">2 B</text><text x="430" y="115">5 C</text><text x="125" y="205">3 D</text><text x="255" y="205">4 E</text></g>
+</svg>
+<div class="caption">图6：DFS 顺序 A → B → D → E → C。走不下去时，回到上一个分岔点。</div>
+</div>
+<p><b>理解关键词：</b>深入、走到底、回退。实现时常借助<b>栈</b>（或递归调用栈）。</p>
+<h3>BFS：广度优先，先把同一层走完</h3>
+<p>从 A 出发，先访问 A 的所有邻居 B、C；再依次访问下一层的 D、E。</p>
+<div class="figure">
+<svg viewBox="0 0 620 245" role="img" aria-label="BFS分层访问顺序A B C D E">
+<g stroke="#8da4b5" stroke-width="3" fill="none"><path d="M310 48L190 125 M310 48L430 125 M190 125L125 210 M190 125L255 210"/></g>
+<g fill="#eaf4ef" stroke="#397b68" stroke-width="3"><circle cx="310" cy="48" r="23"/><circle cx="190" cy="125" r="23"/><circle cx="430" cy="125" r="23"/><circle cx="125" cy="210" r="23"/><circle cx="255" cy="210" r="23"/></g>
+<g fill="#263445" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central"><text x="310" y="48">1 A</text><text x="190" y="125">2 B</text><text x="430" y="125">3 C</text><text x="125" y="210">4 D</text><text x="255" y="210">5 E</text></g>
+<text x="520" y="53" font-size="13" fill="#397b68">第0层</text><text x="520" y="128" font-size="13" fill="#397b68">第1层</text><text x="520" y="213" font-size="13" fill="#397b68">第2层</text>
+</svg>
+<div class="caption">图7：BFS 顺序 A → B → C → D → E。先访问离起点近的，再访问更远的。</div>
+</div>
+<p><b>理解关键词：</b>分层、同层优先。实现时使用<b>队列</b>。</p>
+<table><tr><th>对比</th><th>DFS</th><th>BFS</th></tr><tr><td>中文</td><td>深度优先</td><td>广度优先</td></tr><tr><td>访问方式</td><td>一条路深入后回退</td><td>一层一层向外扩展</td></tr><tr><td>常用辅助结构</td><td>栈</td><td>队列</td></tr><tr><td>无权图最短路径</td><td>不保证</td><td>可以求最少边数路径</td></tr></table>
+<div class="note"><b>必背对应：</b>DFS → 栈；BFS → 队列。无权图求最短路径（按边数）→ BFS。</div>
+
+<h2>04 连通性：能不能从一个点走到另一个点</h2>
+<p>在无向图中，如果任意两个顶点之间都存在路径，这个图就是<b>连通图</b>。如果一个图没有整体连通，它可能由几个互不相连的部分组成，每个最大的连通部分叫一个<b>连通分量</b>。</p>
+<div class="figure">
+<svg viewBox="0 0 620 225" role="img" aria-label="两个连通分量">
+<g stroke="#7b91a4" stroke-width="3" fill="none"><path d="M95 90L175 45L245 105L95 90"/><path d="M390 90L470 45L540 105L390 90"/></g>
+<g fill="#315f88" stroke="white" stroke-width="3"><circle cx="95" cy="90" r="21"/><circle cx="175" cy="45" r="21"/><circle cx="245" cy="105" r="21"/><circle cx="390" cy="90" r="21"/><circle cx="470" cy="45" r="21"/><circle cx="540" cy="105" r="21"/></g>
+<g fill="white" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="700"><text x="95" y="90">A</text><text x="175" y="45">B</text><text x="245" y="105">C</text><text x="390" y="90">D</text><text x="470" y="45">E</text><text x="540" y="105">F</text></g>
+<text x="170" y="175" text-anchor="middle" fill="#315f88" font-size="15" font-weight="700">连通分量 1</text><text x="465" y="175" text-anchor="middle" fill="#315f88" font-size="15" font-weight="700">连通分量 2</text>
+</svg>
+<div class="caption">图8：左边 A、B、C 是一个连通分量；右边 D、E、F 是另一个，共 2 个。</div>
+</div>
+<p>判断连通分量时，可以想象从一个点出发，把所有能到达的点圈成一组。再找还没被圈进去的点，继续圈。最后有几组，就是几个连通分量。</p>
+<div class="warn"><b>有向图要更谨慎：</b>有向图常区分强连通与弱连通。强连通要求顶点之间按箭头方向能够相互到达；弱连通则暂时忽略边的方向后判断是否连通。</div>
+
+<h2>05 生成树与最小生成树：用最少的边把点连起来</h2>
+<p>对于一个连通的无向图，生成树要包含图中所有顶点，并且不能有环。若图有 n 个顶点，生成树一定恰好有 <b>n−1 条边</b>。</p>
+<div class="figure">
+<svg viewBox="0 0 620 245" role="img" aria-label="一个包含五个顶点的生成树">
+<g stroke="#397b68" stroke-width="4" fill="none"><path d="M310 38L190 110L115 205 M190 110L310 205 M310 38L445 110"/></g>
+<g fill="#eaf4ef" stroke="#397b68" stroke-width="3"><circle cx="310" cy="38" r="22"/><circle cx="190" cy="110" r="22"/><circle cx="445" cy="110" r="22"/><circle cx="115" cy="205" r="22"/><circle cx="310" cy="205" r="22"/></g>
+<g fill="#263445" font-size="16" font-weight="700" text-anchor="middle" dominant-baseline="central"><text x="310" y="38">A</text><text x="190" y="110">B</text><text x="445" y="110">C</text><text x="115" y="205">D</text><text x="310" y="205">E</text></g>
+</svg>
+<div class="caption">图9：5 个顶点的树有 4 条边；所有顶点连通，且没有环。</div>
+</div>
+<p>如果图中的边带有权值（例如修路成本、布线费用），希望把所有顶点连起来，同时总权值最小，这就是<b>最小生成树（MST）</b>。</p>
+<h3>两种常考算法</h3>
+<ul><li><b>Prim（普里姆）</b>：从一个顶点开始，每次选择一条连接“已选顶点集合”和“未选顶点”的最小权值边，把新顶点纳入。常作为稠密图的优先选择。</li><li><b>Kruskal（克鲁斯卡尔）</b>：把边按权值从小到大排序，依次选择不会形成回路的边，直到连通。常作为稀疏图的优先选择。</li></ul>
+<div class="note"><b>MST 三个关键词：</b>包含所有顶点、没有回路、总权值最小。若所有边权值互不相同，最小生成树唯一；若存在相同权值，可能不唯一。</div>
+
+<h2>06 最短路径：从一个地方到另一个地方怎么走最省</h2>
+<p>最短路径讨论的是两个顶点之间，路径长度最小的路线。这里要先看题目有没有权值。</p>
+<div class="figure">
+<svg viewBox="0 0 620 245" role="img" aria-label="两条不同长度路径的对比">
+<g stroke="#8da4b5" stroke-width="3" fill="none"><path d="M85 100L205 45L330 100L470 45"/><path d="M85 100L470 185"/></g>
+<g fill="#315f88" stroke="#fff" stroke-width="3"><circle cx="85" cy="100" r="20"/><circle cx="205" cy="45" r="20"/><circle cx="330" cy="100" r="20"/><circle cx="470" cy="45" r="20"/><circle cx="470" cy="185" r="20"/></g>
+<g fill="white" font-size="15" text-anchor="middle" dominant-baseline="central" font-weight="700"><text x="85" y="100">A</text><text x="205" y="45">B</text><text x="330" y="100">C</text><text x="470" y="45">D</text><text x="470" y="185">D</text></g>
+<text x="270" y="20" text-anchor="middle" font-size="13" fill="#667789">路线一：3 条边</text><text x="290" y="190" text-anchor="middle" font-size="13" fill="#397b68">路线二：1 条边（示意）</text>
+</svg>
+<div class="caption">图10：无权图中比较路径长短，通常看经过的边数。</div>
+</div>
+<ul><li><b>无权图</b>：每条边可视为同样长度，BFS 可以找到从起点到各点的最少边数路径。</li><li><b>带权图</b>：边的权值代表距离、时间或费用等，不能只数边数，需要使用适合带权图的最短路径算法，例如 Dijkstra（满足非负权值条件）。</li></ul>
+<div class="warn"><b>特别注意：</b>最小生成树和最短路径不是一回事。最小生成树追求“把所有顶点连起来的总成本最小”；最短路径追求“指定起点到指定终点的路线最短”。</div>
+
+<h2>07 高频考点一页复盘</h2>
+<table><tr><th>考点</th><th>记住这句话</th></tr>
+<tr><td>图的定义</td><td>G=(V,E)，由顶点集和边集组成</td></tr>
+<tr><td>无向图 / 有向图</td><td>无箭头 / 有箭头</td></tr>
+<tr><td>邻接矩阵</td><td>n 个顶点 → n×n；适合稠密图</td></tr>
+<tr><td>邻接表</td><td>记录每个顶点的邻居；适合稀疏图</td></tr>
+<tr><td>DFS</td><td>先深入，再回退；常用栈</td></tr>
+<tr><td>BFS</td><td>逐层访问；使用队列</td></tr>
+<tr><td>无权图最短路径</td><td>BFS，求最少边数</td></tr>
+<tr><td>无向连通图</td><td>任意两点之间都有路径</td></tr>
+<tr><td>连通分量</td><td>互不连通的最大连通子图</td></tr>
+<tr><td>生成树</td><td>包含所有顶点、无环、n−1 条边</td></tr>
+<tr><td>最小生成树</td><td>所有顶点连通且总权值最小</td></tr>
+<tr><td>Prim / Kruskal</td><td>Prim 从点扩展；Kruskal 从边选择</td></tr>
+<tr><td>入度 / 出度</td><td>入度数箭头指进来；出度数箭头指出去</td></tr>
+<tr><td>有向图度数总和</td><td>总入度 = 总出度 = 边数</td></tr></table>
+
+<h2>08 最后，用三个问题检查自己是否真的懂了</h2>
+<ol>
+<li>一个图有 100 个顶点、只有 5 条边，通常更适合用邻接矩阵还是邻接表存储？<br><span class="small">提示：考虑空间是否浪费。</span></li>
+<li>从 A 出发，想在无权图中找到到其他顶点的最少边数路径，应该用 DFS 还是 BFS？<br><span class="small">提示：谁是一层一层向外扩展的？</span></li>
+<li>一个无向连通图有 8 个顶点，它的生成树有多少条边？<br><span class="small">提示：生成树边数公式 n−1。</span></li>
+</ol>
+<div class="summary"><b>本章真正要建立的理解：</b><br>图不是一堆孤立的定义，而是一套描述关系的方法。先看顶点和边，再看如何存储；想知道如何访问，就学 DFS 和 BFS；想判断是否连通，就看连通分量；想用最低成本连接所有点，就看最小生成树；想找两点之间的最短路线，就看最短路径算法。</div>
+<div class="footer">学习建议：先对着图讲出自己的理解，再记忆术语和公式。做题时先判断题目属于哪一个知识模块，不要急着套答案。</div>
+</main>
+</body>
+</html>
