@@ -29,11 +29,17 @@ li{margin:7px 0}
 .tag{display:inline-block;padding:2px 9px;border-radius:99px;background:#edf4f8;color:#315f88;font-size:12px;margin-right:5px}
 .summary{background:#f7f9fa;border-radius:12px;padding:18px 22px;margin-top:22px}
 .footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
-@media(max-width:700px){.page{margin:0;padding:30px 22px 48px}h1{font-size:27px}h2{font-size:21px}}
+.chapnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;padding-bottom:14px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+.chapnav .brand{color:var(--muted);margin-right:auto;letter-spacing:1px}
+.chapnav a{color:var(--blue);text-decoration:none;padding:3px 11px;border:1px solid var(--line);border-radius:99px;white-space:nowrap}
+.chapnav a:hover{background:var(--pale)}
+.chapnav a.on{border-color:var(--blue);background:var(--blue);color:#fff}
+@media(max-width:700px){.page{margin:0;padding:30px 22px 48px}h1{font-size:27px}h2{font-size:21px}.chapnav .brand{display:none}}
 </style>
 </head>
 <body>
 <main class="page">
+<nav class="chapnav"><span class="brand">Rainy · 数据结构</span><a href="chapter07.html">第七章 树与二叉树</a><a class="on" href="index.html">第八章 图</a><a href="https://github.com/rainyland/study-notes">源码</a></nav>
 <div class="kicker">数据结构 · 第八章学习笔记</div>
 <h1>图：把“点和点之间的关系”真正学明白</h1>
 <p class="small">从零理解图的概念、存储、遍历、连通性、生成树与最短路径</p>
