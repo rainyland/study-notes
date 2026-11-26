@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据结构第三章｜栈和队列·图文复盘</title>
+<style>
+:root{--ink:#263445;--muted:#667789;--blue:#315f88;--blue2:#eaf2f8;--green:#397b68;--green2:#eaf4ef;--gold:#bd8735;--gold2:#fff7e9;--line:#dce4ea;--paper:#fff;--bg:#eef2f5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.85 "Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.page{max-width:980px;margin:28px auto;background:var(--paper);padding:54px 66px 64px;box-shadow:0 8px 32px #20304012}
+.kicker{font-size:13px;letter-spacing:2px;color:var(--green);font-weight:700}
+h1{font-size:34px;line-height:1.35;margin:12px 0;color:#20384d}h2{font-size:24px;margin:46px 0 16px;padding-bottom:9px;border-bottom:2px solid var(--line);color:#244c6c}h3{font-size:18px;margin:26px 0 10px;color:var(--blue)}h4{margin:14px 0 6px;color:var(--green)}
+.subtitle{color:var(--muted);font-size:16px;margin:0 0 22px}.lead{background:#f3f7f9;border-left:4px solid var(--green);padding:17px 20px;border-radius:0 9px 9px 0;margin:24px 0 28px}
+p{margin:11px 0}.small,.caption{font-size:13px;color:var(--muted)}.toc{border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0;background:#fbfcfd}.toc strong{color:var(--blue)}.toc ol{columns:2;padding-left:22px;margin:10px 0}.toc li{margin:4px 0}.toc a{color:var(--blue);text-decoration:none}.toc a:hover{text-decoration:underline}
+.figure{margin:22px 0 26px;padding:18px 16px;background:#fbfcfd;border:1px solid var(--line);border-radius:12px;text-align:center;overflow:hidden}.figure svg{width:100%;max-width:680px;height:auto;display:block;margin:auto}.caption{margin-top:10px}
+.note,.warn,.key{padding:14px 18px;margin:18px 0;border-radius:0 8px 8px 0}.note{background:var(--blue2);border-left:4px solid var(--blue)}.warn{background:var(--gold2);border-left:4px solid var(--gold)}.key{background:var(--green2);border-left:4px solid var(--green)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.mini{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fbfcfd}.mini b{color:var(--blue)}
+table{border-collapse:collapse;width:100%;margin:17px 0;font-size:14px}th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}th{background:#f1f5f8;color:#31516c}
+.formula{font-size:19px;text-align:center;color:#244c6c;background:#f7f9fa;border:1px solid var(--line);border-radius:10px;padding:13px;margin:16px 0;font-family:Cambria,serif}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;background:#edf4f8;color:#315f88;font-size:12px;margin:2px 5px 2px 0}
+.stack{display:flex;flex-direction:column-reverse;align-items:center;gap:5px;min-width:110px}.cell{width:100%;max-width:160px;border:1px solid #b9cbd8;background:#eaf2f8;border-radius:7px;padding:7px;text-align:center;font-weight:700;color:#31516c}.cell.top{background:#dcefe6;border-color:#8bb7a3;color:#27634f}.stack-label{font-size:12px;color:var(--muted)}
+.demo{border:1px solid var(--line);border-radius:12px;padding:16px;margin:18px 0;background:#fff}.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}.demo-box{background:#fbfcfd;border:1px solid var(--line);border-radius:9px;padding:12px;min-height:140px}.demo-box h4{margin:0 0 8px}.tokens{display:flex;gap:6px;flex-wrap:wrap}.token{padding:5px 10px;border-radius:6px;background:#eaf2f8;border:1px solid #cfdae3;font-weight:700}.token.hot{background:#dcefe6;border-color:#8bb7a3}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;background:var(--blue);color:white;border-radius:7px;padding:9px 15px;cursor:pointer;font:inherit}button.secondary{background:#e9eef2;color:#31495e}button:hover{filter:brightness(.96)}button:disabled{opacity:.4;cursor:not-allowed}
+.quiz{border:1px solid var(--line);border-radius:12px;padding:17px 19px;margin:15px 0;background:#fff}.quiz p{font-weight:700}.quiz label{display:block;padding:7px 10px;margin:5px 0;border-radius:7px;cursor:pointer}.quiz label:hover{background:#f2f6f8}.quiz input{margin-right:8px}.feedback{margin-top:10px;padding:10px 12px;border-radius:8px;display:none}.feedback.ok{display:block;background:var(--green2);color:#27634f}.feedback.no{display:block;background:var(--gold2);color:#80591f}
+.summary{background:#f7f9fa;border-radius:12px;padding:18px 22px;margin-top:24px}.footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+details{border:1px solid var(--line);border-radius:10px;padding:12px 15px;margin:12px 0;background:#fff}summary{cursor:pointer;font-weight:700;color:var(--blue)}details p{margin-bottom:2px}
+.chapnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;padding-bottom:14px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+.chapnav .brand{color:var(--muted);margin-right:auto;letter-spacing:1px}
+.chapnav a{color:var(--blue);text-decoration:none;padding:3px 11px;border:1px solid var(--line);border-radius:99px;white-space:nowrap}
+.chapnav a:hover{background:var(--blue2)}
+.chapnav a.on{border-color:var(--blue);background:var(--blue);color:#fff}
+@media(max-width:720px){.page{margin:0;padding:30px 20px 48px}h1{font-size:28px}h2{font-size:21px}.toc ol{columns:1}.two,.demo-grid{grid-template-columns:1fr}table{font-size:13px}th,td{padding:7px 8px}.figure{padding:12px 8px}.chapnav .brand{display:none}}
+@media print{body{background:#fff}.page{box-shadow:none;margin:0;max-width:none;padding:20px}.toc a{color:inherit}button{display:none}}
+</style>
+</head>
+<body>
+<main class="page">
+<nav class="chapnav"><span class="brand">Rainy · 数据结构</span><a class="on" href="chapter03.html">第三章 栈和队列</a><a href="chapter07.html">第七章 树与二叉树</a><a href="index.html">第八章 图</a><a href="https://github.com/rainyland/study-notes">源码</a></nav>
+<div class="kicker">数据结构 · 第三章学习笔记</div>
+<h1>栈和队列：把“先进后出、先进先出”真正学明白</h1>
+<p class="subtitle">从栈与队列的基本操作，到共享栈、循环队列、递归调用和中缀转后缀表达式</p>
+<div class="lead">这一章的核心不是背定义，而是看清楚<strong>元素从哪里进入、从哪里离开、指针如何变化</strong>。栈像一摞盘子：最后放上去的先拿走；队列像排队：先来的人先离开。抓住这两个动作，后面的题目就能画图推出来。</div>
+
+<nav class="toc"><strong>本章导航</strong><ol>
+<li><a href="#s1">栈：只能从栈顶进出</a></li><li><a href="#s2">栈的顺序存储与共享栈</a></li><li><a href="#s3">合法出栈序列与卡特兰数</a></li><li><a href="#s4">队列：一端进、另一端出</a></li><li><a href="#s5">循环队列与指针公式</a></li><li><a href="#s6">链式队列与删除操作</a></li><li><a href="#s7">递归为什么离不开栈</a></li><li><a href="#s8">中缀表达式转后缀表达式</a></li><li><a href="#s9">本章易错点与自测</a></li>
+</ol></nav>
+
+<h2 id="s1">01 栈：只能从栈顶进出</h2>
+<p><b>栈（Stack）</b>是一种只允许在<strong>同一端</strong>进行插入和删除的线性表。这一端叫<strong>栈顶（top）</strong>，另一端叫<strong>栈底（bottom）</strong>。</p>
+<div class="two">
+<div class="mini"><b>入栈 Push</b><p>新元素放到栈顶。</p><div class="figure"><svg viewBox="0 0 260 170"><path d="M80 20V145H180V20" fill="none" stroke="#7892a5" stroke-width="4"/><rect x="91" y="105" width="78" height="30" rx="5" fill="#dce7ef"/><text x="130" y="125" text-anchor="middle" font-size="14" fill="#31516c">A</text><rect x="91" y="70" width="78" height="30" rx="5" fill="#dce7ef"/><text x="130" y="90" text-anchor="middle" font-size="14" fill="#31516c">B</text><rect x="91" y="35" width="78" height="30" rx="5" fill="#dcefe6" stroke="#397b68"/><text x="130" y="55" text-anchor="middle" font-size="14" fill="#27634f">C 新入栈</text><text x="190" y="52" font-size="12" fill="#397b68">栈顶</text><text x="190" y="137" font-size="12" fill="#667789">栈底</text></svg></div></div>
+<div class="mini"><b>出栈 Pop</b><p>只能取走当前栈顶元素。</p><div class="figure"><svg viewBox="0 0 260 170"><path d="M80 20V145H180V20" fill="none" stroke="#7892a5" stroke-width="4"/><rect x="91" y="105" width="78" height="30" rx="5" fill="#dce7ef"/><text x="130" y="125" text-anchor="middle" font-size="14" fill="#31516c">A</text><rect x="91" y="70" width="78" height="30" rx="5" fill="#dce7ef"/><text x="130" y="90" text-anchor="middle" font-size="14" fill="#31516c">B</text><path d="M130 65V18M119 29L130 17L141 29" stroke="#bd8735" stroke-width="3" fill="none"/><text x="190" y="52" font-size="12" fill="#bd8735">C 出栈</text><text x="190" y="137" font-size="12" fill="#667789">栈底</text></svg></div></div>
+</div>
+<div class="key"><b>一句话记忆：</b>栈 = 后进先出（LIFO）。最后进入的元素，最先离开。</div>
+<h3>栈的基本操作</h3>
+<table><tr><th>操作</th><th>含义</th><th>注意</th></tr><tr><td>InitStack</td><td>初始化空栈</td><td>建立空栈</td></tr><tr><td>Push</td><td>入栈</td><td>先检查栈是否已满，再放入栈顶</td></tr><tr><td>Pop</td><td>出栈</td><td>先检查栈是否为空，再移除栈顶</td></tr><tr><td>GetTop</td><td>读取栈顶</td><td>只读取，不删除</td></tr><tr><td>StackEmpty</td><td>判断是否为空</td><td>空栈不能出栈</td></tr></table>
+<p>栈和队列都属于<strong>受限的线性表</strong>：它们不是普通线性表那样任意位置都能插入、删除，而是限制了操作端点。</p>
+
+<h2 id="s2">02 栈的顺序存储与共享栈</h2>
+<h3>顺序栈：用数组保存元素</h3>
+<p>假设数组为 <code>V[1...n]</code>，并且初始栈顶指针 <code>top=n+1</code>。这代表栈从数组右侧向左增长。</p>
+<div class="figure"><svg viewBox="0 0 650 170"><text x="25" y="25" fill="#667789" font-size="13">空栈：top = n+1</text><g stroke="#9aabba" fill="#f7f9fa"><rect x="25" y="48" width="82" height="45"/><rect x="107" y="48" width="82" height="45"/><rect x="189" y="48" width="82" height="45"/><rect x="271" y="48" width="82" height="45"/><rect x="353" y="48" width="82" height="45"/><rect x="435" y="48" width="82" height="45"/></g><g fill="#667789" font-size="13" text-anchor="middle"><text x="66" y="76">V[1]</text><text x="148" y="76">V[2]</text><text x="230" y="76">V[3]</text><text x="312" y="76">…</text><text x="394" y="76">V[n-1]</text><text x="476" y="76">V[n]</text></g><path d="M535 70H595" stroke="#bd8735" stroke-width="3"/><path d="M585 60L596 70L585 80" stroke="#bd8735" stroke-width="3" fill="none"/><text x="535" y="105" fill="#bd8735" font-size="13">top=n+1</text><text x="25" y="145" fill="#315f88" font-size="14">第一次入栈：top=top-1；V[top]=x</text></svg><div class="caption">本题给定的存储约定是从右向左入栈，别和从左向右的常见写法混淆。</div></div>
+<div class="formula">入栈：top = top − 1；V[top] = x</div>
+<p>例如初始 <code>top=6</code>，第一次入栈先让 top 变成 5，再把元素写入 V[5]。</p>
+<h3>共享栈：两个栈共用一个数组</h3>
+<p>两个栈的栈底分别放在数组两端，栈1向右长，栈2向左长。这样一边空闲的空间可以被另一边使用。</p>
+<div class="figure"><svg viewBox="0 0 650 190"><text x="24" y="25" font-size="13" fill="#315f88">栈1向右增长</text><text x="626" y="25" font-size="13" text-anchor="end" fill="#397b68">栈2向左增长</text><g stroke="#9aabba"><rect x="25" y="50" width="75" height="48" fill="#eaf2f8"/><rect x="100" y="50" width="75" height="48" fill="#eaf2f8"/><rect x="175" y="50" width="75" height="48" fill="#f7f9fa"/><rect x="250" y="50" width="75" height="48" fill="#f7f9fa"/><rect x="325" y="50" width="75" height="48" fill="#f7f9fa"/><rect x="400" y="50" width="75" height="48" fill="#f7f9fa"/><rect x="475" y="50" width="75" height="48" fill="#eaf4ef"/><rect x="550" y="50" width="75" height="48" fill="#eaf4ef"/></g><g font-size="13" text-anchor="middle" fill="#31516c"><text x="62" y="79">栈1</text><text x="137" y="79">栈1</text><text x="212" y="79">空闲</text><text x="287" y="79">空闲</text><text x="362" y="79">空闲</text><text x="437" y="79">空闲</text><text x="512" y="79">栈2</text><text x="587" y="79">栈2</text></g><path d="M175 116H475" stroke="#bd8735" stroke-width="2" stroke-dasharray="5 5"/><text x="325" y="143" text-anchor="middle" font-size="13" fill="#bd8735">两栈向中间生长，共享空闲空间</text><text x="25" y="174" font-size="13" fill="#667789">栈1空：top[1]=0</text><text x="625" y="174" text-anchor="end" font-size="13" fill="#667789">栈2空：top[2]=n+1</text></svg></div>
+<table><tr><th>状态</th><th>条件</th></tr><tr><td>栈1为空</td><td><code>top[1] = 0</code></td></tr><tr><td>栈2为空</td><td><code>top[2] = n+1</code></td></tr><tr><td>共享栈满</td><td><code>top[1] + 1 = top[2]</code></td></tr></table>
+<div class="note"><b>判断共享栈满：</b>只要两个栈顶中间已经没有空位，就满了。不是某一个栈先碰到数组末尾。</div>
+
+<h2 id="s3">03 合法出栈序列：画栈，不要靠猜</h2>
+<p>给定入栈顺序 <code>1,2,3</code>。每次只能把下一个元素入栈，也只能弹出当前栈顶。问哪些出栈顺序可能出现？</p>
+<div class="figure"><svg viewBox="0 0 650 245"><text x="25" y="28" font-size="14" fill="#315f88" font-weight="700">入栈顺序：1 → 2 → 3</text><g stroke="#7c91a2" stroke-width="2.5" fill="none"><path d="M75 72V190H175V72"/><path d="M275 72V190H375V72"/><path d="M475 72V190H575V72"/></g><g font-size="14" text-anchor="middle" fill="#263445"><text x="125" y="55">入栈</text><text x="325" y="55">栈内</text><text x="525" y="55">出栈</text></g><g fill="#dcefe6" stroke="#397b68"><rect x="88" y="145" width="74" height="34" rx="5"/><rect x="88" y="105" width="74" height="34" rx="5"/><rect x="88" y="65" width="74" height="34" rx="5"/></g><g font-size="14" text-anchor="middle" fill="#27634f"><text x="125" y="167">1</text><text x="125" y="127">2</text><text x="125" y="87">3</text></g><path d="M190 125H255" stroke="#bd8735" stroke-width="3"/><path d="M245 115L256 125L245 135" stroke="#bd8735" stroke-width="3" fill="none"/><g fill="#eaf2f8" stroke="#7892a5"><rect x="288" y="145" width="74" height="34" rx="5"/><rect x="288" y="105" width="74" height="34" rx="5"/></g><g font-size="14" text-anchor="middle" fill="#31516c"><text x="325" y="167">1</text><text x="325" y="127">2</text></g><path d="M390 125H455" stroke="#bd8735" stroke-width="3"/><path d="M445 115L456 125L445 135" stroke="#bd8735" stroke-width="3" fill="none"/><text x="525" y="130" text-anchor="middle" font-size="14" fill="#397b68">先出 3</text><text x="325" y="220" text-anchor="middle" font-size="13" fill="#667789">想弹出某个元素，它上面压着的元素必须先弹出。</text></svg></div>
+<div class="key"><b>核心判断：</b>如果想让 2 先出栈，但 3 已经入栈且压在 2 上面，那么必须先弹出 3；不能跳过栈顶直接取 2。</div>
+<h3>三个元素的全部合法序列</h3>
+<table><tr><th>出栈序列</th><th>是否合法</th><th>理由</th></tr><tr><td>123</td><td>合法</td><td>1入1出，2入2出，3入3出</td></tr><tr><td>132</td><td>合法</td><td>1先出；2、3入栈后先出3，再出2</td></tr><tr><td>213</td><td>合法</td><td>1、2入栈，先出2，再出1，最后3</td></tr><tr><td>231</td><td>合法</td><td>1、2、3入栈，先出3，再出2、1</td></tr><tr><td>321</td><td>合法</td><td>全部入栈后，按栈顶顺序弹出</td></tr><tr><td>312</td><td>不合法</td><td>3出栈后，1在2下面，不能先出1再出2</td></tr></table>
+<h3>出栈序列总数：卡特兰数</h3>
+<p>当输入序列为 <code>1,2,...,n</code> 时，不同合法出栈序列的数量为第 n 个卡特兰数。</p>
+<div class="formula">Cₙ = (1 / (n+1)) × C(2n,n)</div>
+<table><tr><th>输入元素个数 n</th><th>合法出栈序列数 Cₙ</th></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>2</td></tr><tr><td>3</td><td>5</td></tr><tr><td>4</td><td>14</td></tr><tr><td>5</td><td>42</td></tr></table>
+<div class="warn"><b>本章作业提醒：</b>输入序列 12345 的不同出栈序列数是 <strong>42</strong>，不是 14。14 对应 n=4。</div>
+
+<h2 id="s4">04 队列：一端进、另一端出</h2>
+<p><b>队列（Queue）</b>是一种只允许在<strong>队尾插入</strong>、在<strong>队头删除</strong>的线性表。</p>
+<div class="figure"><svg viewBox="0 0 650 170"><text x="28" y="30" font-size="14" fill="#315f88" font-weight="700">出队方向</text><path d="M120 25H35M45 15L34 25L45 35" stroke="#bd8735" stroke-width="3" fill="none"/><g stroke="#8da4b5"><rect x="85" y="62" width="82" height="48" rx="5" fill="#eaf2f8"/><rect x="167" y="62" width="82" height="48" rx="5" fill="#eaf2f8"/><rect x="249" y="62" width="82" height="48" rx="5" fill="#eaf2f8"/><rect x="331" y="62" width="82" height="48" rx="5" fill="#eaf2f8"/><rect x="413" y="62" width="82" height="48" rx="5" fill="#eaf4ef"/></g><g font-size="15" fill="#31516c" text-anchor="middle"><text x="126" y="91">A</text><text x="208" y="91">B</text><text x="290" y="91">C</text><text x="372" y="91">D</text><text x="454" y="91">新元素</text></g><path d="M540 85H610M600 75L611 85L600 95" stroke="#397b68" stroke-width="3" fill="none"/><text x="565" y="55" font-size="13" fill="#397b68">入队方向</text><text x="126" y="135" text-anchor="middle" font-size="13" fill="#667789">队头 front</text><text x="454" y="135" text-anchor="middle" font-size="13" fill="#667789">队尾 rear</text></svg><div class="caption">队头负责删除，队尾负责插入；元素按进入队列的先后顺序离开。</div></div>
+<div class="key"><b>一句话记忆：</b>队列 = 先进先出（FIFO）。先进入的元素，先离开。</div>
+<table><tr><th>操作</th><th>位置</th><th>含义</th></tr><tr><td>EnQueue</td><td>队尾 rear</td><td>新元素进入队列</td></tr><tr><td>DeQueue</td><td>队头 front</td><td>删除最早进入的元素</td></tr><tr><td>GetHead</td><td>队头 front</td><td>读取队头但不删除</td></tr></table>
+<p>栈与队列的共同点：都属于特殊线性表，插入和删除都受端点限制。不同点是栈在同一端操作，队列在两端分别操作。</p>
+
+<h2 id="s5">05 循环队列：解决“假溢出”</h2>
+<h3>为什么需要循环队列？</h3>
+<p>普通顺序队列中，前面元素出队后，前面的数组位置虽然空出来了，但 rear 仍可能已经走到数组末尾。此时如果不能继续利用前面的空位，就会出现<strong>假溢出</strong>。</p>
+<div class="figure"><svg viewBox="0 0 650 205"><text x="20" y="25" font-size="14" fill="#315f88" font-weight="700">普通顺序队列：前面空了，队尾却到头了</text><g stroke="#9aabba"><rect x="25" y="52" width="80" height="42" fill="#fff"/><rect x="105" y="52" width="80" height="42" fill="#fff"/><rect x="185" y="52" width="80" height="42" fill="#eaf2f8"/><rect x="265" y="52" width="80" height="42" fill="#eaf2f8"/><rect x="345" y="52" width="80" height="42" fill="#eaf2f8"/><rect x="425" y="52" width="80" height="42" fill="#eaf2f8"/><rect x="505" y="52" width="80" height="42" fill="#fff"/></g><g font-size="13" text-anchor="middle"><text x="65" y="78" fill="#bd8735">空</text><text x="145" y="78" fill="#bd8735">空</text><text x="225" y="78" fill="#31516c">A</text><text x="305" y="78" fill="#31516c">B</text><text x="385" y="78" fill="#31516c">C</text><text x="465" y="78" fill="#31516c">D</text><text x="545" y="78" fill="#bd8735">末端</text></g><text x="30" y="125" font-size="13" fill="#667789">前面有空位，但 rear 已到数组末尾，不能直接从末尾继续插入。</text><path d="M30 164H590" stroke="#397b68" stroke-width="2"/><path d="M580 154L591 164L580 174" stroke="#397b68" stroke-width="2" fill="none"/><text x="310" y="190" text-anchor="middle" font-size="13" fill="#397b68">循环队列：把数组首尾逻辑上连接起来</text></svg></div>
+<h3>循环队列的核心公式</h3>
+<p>循环队列把数组看成一个首尾相连的圆环。指针走到最后一个位置，再前进一步就回到 0。</p>
+<div class="formula">rear = (rear + 1) % MAXSIZE</div>
+<div class="figure"><svg viewBox="0 0 620 260"><circle cx="310" cy="130" r="90" fill="none" stroke="#b8c8d4" stroke-width="3"/><g fill="#eaf2f8" stroke="#7892a5" stroke-width="2"><circle cx="310" cy="40" r="25"/><circle cx="374" cy="66" r="25"/><circle cx="400" cy="130" r="25"/><circle cx="374" cy="194" r="25"/><circle cx="310" cy="220" r="25"/><circle cx="246" cy="194" r="25"/><circle cx="220" cy="130" r="25"/><circle cx="246" cy="66" r="25"/></g><g fill="#31516c" font-size="13" text-anchor="middle" dominant-baseline="middle"><text x="310" y="40">0</text><text x="374" y="66">1</text><text x="400" y="130">2</text><text x="374" y="194">3</text><text x="310" y="220">4</text><text x="246" y="194">5</text><text x="220" y="130">6</text><text x="246" y="66">7</text></g><path d="M422 108Q465 55 415 30" fill="none" stroke="#bd8735" stroke-width="3"/><path d="M404 28L416 29L412 41" fill="none" stroke="#bd8735" stroke-width="3"/><text x="480" y="26" font-size="13" fill="#bd8735">越过末尾</text><text x="310" y="126" text-anchor="middle" font-size="14" fill="#397b68" font-weight="700">首尾相接</text></svg><div class="caption">示意：MAXSIZE=8 时，位置 7 再前进一步回到位置 0。</div></div>
+<table><tr><th>判断</th><th>条件</th><th>含义</th></tr><tr><td>队空</td><td><code>front == rear</code></td><td>队头指针和队尾指针重合</td></tr><tr><td>队满</td><td><code>(rear + 1) % MAXSIZE == front</code></td><td>再放一个元素就会追上 front</td></tr><tr><td>当前元素个数</td><td><code>(rear - front + MAXSIZE) % MAXSIZE</code></td><td>rear 指向下一次入队位置</td></tr></table>
+<div class="warn"><b>为什么通常浪费一个存储单元？</b>为了区分“队空”和“队满”。两者都可能表现为 front 与 rear 重合，因此约定空队列 front=rear；队满时让 rear 的下一个位置等于 front，留出一个空位。</div>
+<h3>用 MAXSIZE=5 走一遍</h3>
+<div class="demo">
+<p><b>例子：</b>数组下标为 0、1、2、3、4。rear=4 时，再入队会回到 0。</p>
+<div class="demo-grid"><div class="demo-box"><h4>数组位置</h4><div class="tokens" id="ringCells"></div><p class="small" id="ringText">front=2，rear=1</p></div><div class="demo-box"><h4>判断结果</h4><p id="ringResult">点击按钮查看队列状态。</p><p class="small">队满判断：(rear+1)%5 是否等于 front</p></div></div>
+<div class="controls"><button onclick="setRing(2,1)">示例：front=2，rear=1</button><button class="secondary" onclick="setRing(0,3)">示例：front=0，rear=3</button><button class="secondary" onclick="setRing(3,3)">示例：front=3，rear=3</button></div>
+</div>
+<div class="note"><b>下标范围提醒：</b>如果题目数组写成 A[0...m]，共有 m+1 个位置，取模应使用 m+1；如果数组长度直接记作 MAXSIZE，就使用 MAXSIZE。看清楚题目给的数组范围。</div>
+
+<h2 id="s6">06 链式队列与删除操作</h2>
+<p>链式队列用结点链接元素，通常设置两个指针：<code>front</code> 指向队头，<code>rear</code> 指向队尾。</p>
+<div class="figure"><svg viewBox="0 0 650 160"><g stroke="#7892a5" stroke-width="2" fill="#eaf2f8"><rect x="65" y="55" width="110" height="50" rx="6"/><rect x="245" y="55" width="110" height="50" rx="6"/><rect x="425" y="55" width="110" height="50" rx="6"/></g><g fill="#31516c" text-anchor="middle" font-size="14"><text x="120" y="85">A</text><text x="300" y="85">B</text><text x="480" y="85">C</text></g><g stroke="#397b68" stroke-width="3" fill="none"><path d="M175 80H245M235 72L246 80L235 88M355 80H425M415 72L426 80L415 88"/></g><text x="120" y="35" text-anchor="middle" fill="#315f88" font-size="13">front</text><text x="480" y="35" text-anchor="middle" fill="#397b68" font-size="13">rear</text><text x="325" y="140" text-anchor="middle" fill="#667789" font-size="13">删除队头结点后，front 指向下一个结点</text></svg></div>
+<ul><li>队列有多个结点时，删除队头：通常只需要修改 <code>front</code>。</li><li>队列只有一个结点时，删除后队列变空：<code>front</code> 和 <code>rear</code> 都需要调整为空状态。</li></ul>
+<div class="key"><b>考试表述：</b>链式队列删除时，头、尾指针<strong>可能都要修改</strong>。因此选择“可能都要修改”，而不是“始终都修改”。</div>
+
+<h2 id="s7">07 递归为什么离不开栈</h2>
+<p><b>递归</b>是函数在执行过程中调用自身。每次调用都需要暂存本次调用的参数、局部变量和返回位置；这些信息要按“后调用的先返回”的顺序管理，因此使用栈。</p>
+<div class="figure"><svg viewBox="0 0 650 235"><text x="150" y="25" text-anchor="middle" font-size="14" fill="#315f88" font-weight="700">调用过程：不断压栈</text><text x="490" y="25" text-anchor="middle" font-size="14" fill="#397b68" font-weight="700">返回过程：依次出栈</text><g stroke="#7892a5" stroke-width="3" fill="none"><path d="M75 55V190H225V55M415 55V190H565V55"/></g><g><rect x="90" y="145" width="120" height="34" rx="5" fill="#eaf2f8"/><rect x="90" y="105" width="120" height="34" rx="5" fill="#eaf2f8"/><rect x="90" y="65" width="120" height="34" rx="5" fill="#dcefe6"/><rect x="430" y="145" width="120" height="34" rx="5" fill="#eaf2f8"/><rect x="430" y="105" width="120" height="34" rx="5" fill="#eaf2f8"/><rect x="430" y="65" width="120" height="34" rx="5" fill="#dcefe6"/></g><g font-size="14" text-anchor="middle" fill="#31516c"><text x="150" y="167">A()</text><text x="150" y="127">B()</text><text x="150" y="87">C()</text><text x="490" y="167">A() 返回</text><text x="490" y="127">B() 返回</text><text x="490" y="87">C() 返回</text></g><path d="M245 125H390" stroke="#bd8735" stroke-width="3"/><path d="M380 115L391 125L380 135" stroke="#bd8735" stroke-width="3" fill="none"/><text x="317" y="108" text-anchor="middle" font-size="12" fill="#bd8735">后调用先返回</text></svg><div class="caption">A 调用 B，B 调用 C；C 完成后先返回 B，再返回 A。</div></div>
+<h3>递归算法必须具备两部分</h3>
+<div class="two"><div class="mini"><b>终止条件</b><p>告诉程序什么时候停止继续调用自己，避免无限递归。</p></div><div class="mini"><b>递归部分</b><p>把当前问题转化成规模更小、形式相同的子问题。</p></div></div>
+<div class="warn"><b>易错：</b>递归不代表效率一定高。递归调用会产生额外的调用栈开销；某些问题用循环实现可能更省空间。</div>
+<p>栈常见应用：递归调用、子程序调用、表达式求值、括号匹配、深度优先搜索等。</p>
+
+<h2 id="s8">08 中缀表达式转后缀表达式</h2>
+<p>中缀表达式是我们平时熟悉的写法，例如 <code>a+b</code>；后缀表达式把运算符放在操作数后面，例如 <code>ab+</code>。转换时通常借助一个<strong>运算符栈</strong>。</p>
+<div class="two"><div class="mini"><b>中缀表达式</b><div class="formula">a + b × c</div><p>运算符写在操作数中间。</p></div><div class="mini"><b>后缀表达式</b><div class="formula">a b c × +</div><p>运算符写在对应操作数后面。</p></div></div>
+<h3>转换规则：记住这四条</h3>
+<ol><li><b>操作数（字母、数字）：</b>直接加入输出，不进运算符栈。</li><li><b>左括号 <code>(</code>：</b>直接入栈，作为括号内外的分界。</li><li><b>遇到运算符：</b>若栈顶运算符优先级更高或相同，先弹出栈顶到输出；再把当前运算符入栈。左括号会阻止继续弹出。</li><li><b>遇到右括号 <code>)</code>：</b>不断弹出运算符到输出，直到遇到左括号；左括号丢弃，不输出。</li></ol>
+<table><tr><th>运算符</th><th>优先级</th><th>说明</th></tr><tr><td><code>*</code>、<code>/</code></td><td>高</td><td>乘除先于加减</td></tr><tr><td><code>+</code>、<code>-</code></td><td>低</td><td>同级运算从左向右</td></tr><tr><td><code>(</code></td><td>括号屏障</td><td>阻止括号外运算符参与比较</td></tr></table>
+<div class="note"><b>最关键的判断：</b>栈顶是 <code>+</code>，新遇到 <code>*</code>：新运算符优先级更高，直接压入。栈顶是 <code>*</code>，新遇到 <code>+</code>：先弹出 <code>*</code>，再处理 <code>+</code>。</div>
+<h3>例1：a+b*c</h3>
+<div class="figure"><svg viewBox="0 0 650 250"><text x="24" y="28" font-size="14" fill="#315f88" font-weight="700">扫描过程（栈顶在上）</text><g font-size="13" fill="#263445"><text x="35" y="68">读入 a</text><text x="35" y="105">读入 +</text><text x="35" y="142">读入 b</text><text x="35" y="179">读入 *</text><text x="35" y="216">读入 c</text></g><g stroke="#dce4ea"><path d="M130 56H625M130 93H625M130 130H625M130 167H625M130 204H625"/></g><g font-size="13" fill="#31516c"><text x="155" y="68">输出：a</text><text x="155" y="105">栈：+；输出：a</text><text x="155" y="142">栈：+；输出：ab</text><text x="155" y="179">栈：*、+；输出：ab</text><text x="155" y="216">栈：*、+；输出：abc</text></g><text x="420" y="242" text-anchor="middle" font-size="13" fill="#397b68">扫描结束：先弹出 *，再弹出 + → abc*+</text></svg></div>
+<div class="key"><b>结果：</b><code>a+b*c → abc*+</code>。乘法先算，所以 <code>*</code> 在后缀表达式中先于 <code>+</code> 出现。</div>
+<h3>例2：a*(b+c)</h3>
+<p>括号里的 <code>b+c</code> 必须先完成，转换结果为：</p>
+<div class="formula">a*(b+c) → abc+*</div>
+<h3>原作业第18题：扫描到 f 时，栈里有什么？</h3>
+<p>题目：<code>#a/b+(c*d-e*f)/g#</code>。表达式两端的 <code>#</code> 作为界限标记，下面按<strong>栈底到栈顶</strong>列出元素。</p>
+<table><tr><th>扫描到的符号</th><th>处理</th><th>栈（栈底 → 栈顶）</th></tr>
+<tr><td>#</td><td># 入栈</td><td>#</td></tr><tr><td>/</td><td>/ 入栈</td><td># /</td></tr><tr><td>+</td><td>先弹出 /，再压入 +</td><td># +</td></tr><tr><td>(</td><td>左括号入栈</td><td># + (</td></tr><tr><td>*</td><td>* 入栈</td><td># + ( *</td></tr><tr><td>-</td><td>先弹出 *，再压入 -</td><td># + ( -</td></tr><tr><td>*</td><td>* 优先级更高，直接入栈</td><td># + ( - *</td></tr><tr><td>f</td><td>操作数直接输出，不改变栈</td><td><strong># + ( - *</strong></td></tr></table>
+<div class="key"><b>第18题答案：</b>栈底到栈顶为 <code># + ( - *</code>；如果题目按栈顶到栈底书写，则是 <code>* - ( + #</code>。</div>
+
+<h2 id="s9">09 高频易错点与自测</h2>
+<h3>一页复盘</h3>
+<table><tr><th>考点</th><th>记住这句话</th></tr>
+<tr><td>栈</td><td>同一端进出；后进先出</td></tr><tr><td>队列</td><td>队尾入队、队头出队；先进先出</td></tr><tr><td>共享栈</td><td>两栈底在数组两端，向中间生长</td></tr><tr><td>共享栈满</td><td><code>top[1]+1=top[2]</code></td></tr><tr><td>合法出栈</td><td>不能越过当前栈顶弹出元素</td></tr><tr><td>卡特兰数</td><td>n=4 时 14；n=5 时 42</td></tr><tr><td>循环队列空</td><td><code>front==rear</code></td></tr><tr><td>循环队列满</td><td><code>(rear+1)%MAXSIZE==front</code></td></tr><tr><td>循环队列入队</td><td><code>rear=(rear+1)%MAXSIZE</code></td></tr><tr><td>链式队列删除</td><td>删除唯一结点时，头尾指针都要调整</td></tr><tr><td>递归</td><td>必须有终止条件和递归部分；调用过程用栈管理</td></tr><tr><td>中缀转后缀</td><td>操作数直接输出；运算符按优先级进出栈</td></tr></table>
+
+<h3>自测题（点选后提交）</h3>
+<div class="quiz" data-answer="C" data-explain="栈和队列的共同点是插入、删除都受端点限制；栈同一端，队列两端分别操作。"><p>1. 栈和队列的共同点是？</p><label><input type="radio" name="q1" value="A">A. 都是先进先出</label><label><input type="radio" name="q1" value="B">B. 都是先进后出</label><label><input type="radio" name="q1" value="C">C. 只允许在端点处插入和删除元素</label><label><input type="radio" name="q1" value="D">D. 没有共同点</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+<div class="quiz" data-answer="D" data-explain="递归调用、子程序调用和表达式求值都是栈的典型应用。"><p>2. 栈的典型应用包括？</p><label><input type="radio" name="q2" value="A">A. 递归调用</label><label><input type="radio" name="q2" value="B">B. 子程序调用</label><label><input type="radio" name="q2" value="C">C. 表达式求值</label><label><input type="radio" name="q2" value="D">D. 以上都是</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+<div class="quiz" data-answer="B" data-explain="共享栈两个栈顶相邻时，中间没有空位，条件为 top[1]+1=top[2]。"><p>3. 两个栈共享数组时，栈满条件是？</p><label><input type="radio" name="q3" value="A">A. top[1]=top[2]</label><label><input type="radio" name="q3" value="B">B. top[1]+1=top[2]</label><label><input type="radio" name="q3" value="C">C. top[1]=0</label><label><input type="radio" name="q3" value="D">D. top[2]=n+1</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+<div class="quiz" data-answer="A" data-explain="循环队列采用预留一个空位区分队满和队空，队满时 rear 的下一个位置就是 front。"><p>4. 循环队列的队满条件是？</p><label><input type="radio" name="q4" value="A">A. (rear+1)%MAXSIZE==front</label><label><input type="radio" name="q4" value="B">B. front==rear</label><label><input type="radio" name="q4" value="C">C. rear==MAXSIZE</label><label><input type="radio" name="q4" value="D">D. front==0</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+<div class="quiz" data-answer="B" data-explain="a+b*c 先计算 b*c，再与 a 相加，因此后缀表达式是 abc*+。"><p>5. a+b*c 对应的后缀表达式是？</p><label><input type="radio" name="q5" value="A">A. ab+c*</label><label><input type="radio" name="q5" value="B">B. abc*+</label><label><input type="radio" name="q5" value="C">C. abc+*</label><label><input type="radio" name="q5" value="D">D. a+bc*</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+<div class="quiz" data-answer="A" data-explain="输入 12345 的合法出栈序列数为第5个卡特兰数 42。"><p>6. 输入序列为 12345，不同的合法出栈序列有多少种？</p><label><input type="radio" name="q6" value="A">A. 42</label><label><input type="radio" name="q6" value="B">B. 14</label><label><input type="radio" name="q6" value="C">C. 24</label><label><input type="radio" name="q6" value="D">D. 120</label><button onclick="checkQuiz(this)">提交答案</button><div class="feedback"></div></div>
+
+<div class="summary"><b>本章学习主线</b><p>先分清栈和队列的操作规则 → 掌握顺序栈与共享栈 → 会判断合法出栈序列 → 理解队列与循环队列指针公式 → 掌握链式队列删除 → 理解递归调用为什么使用栈 → 最后掌握中缀转后缀的运算符栈。</p><p><b>复习建议：</b>遇到指针题就画数组；遇到出栈序列就画栈；遇到中缀转后缀就逐个扫描符号并记录栈的变化。不要只背选项字母。</p></div>
+<div class="footer">数据结构 · 第三章《栈和队列》图文复盘<br>依据本章作业题与逐步学习内容整理。页面包含知识讲解、结构示意图、公式、例题与可交互自测；适配电脑和手机，可直接浏览器打开或打印。</div>
+</main>
+<script>
+function checkQuiz(btn){const box=btn.closest('.quiz');const chosen=box.querySelector('input:checked');const fb=box.querySelector('.feedback');if(!chosen){fb.className='feedback no';fb.textContent='先选择一个答案再提交。';return;}const ok=chosen.value===box.dataset.answer;fb.className='feedback '+(ok?'ok':'no');fb.textContent=(ok?'回答正确！':'还不正确。')+box.dataset.explain;}
+function setRing(front,rear){const cells=document.getElementById('ringCells');cells.innerHTML='';for(let i=0;i<5;i++){const d=document.createElement('div');d.className='token'+(i===front?' hot':'');d.textContent=i+(i===front?' · front':i===rear?' · rear':'');cells.appendChild(d);}document.getElementById('ringText').textContent='front='+front+'，rear='+rear;const full=(rear+1)%5===front;const empty=front===rear;document.getElementById('ringResult').textContent=empty?'队列为空（front 与 rear 重合）。':full?'队列已满（rear 的下一个位置等于 front）。':'队列未满，且非空。';}
+setRing(2,1);
+</script>
+</body></html>
